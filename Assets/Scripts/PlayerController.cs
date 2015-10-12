@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
 	public float shipSpeed;
 	public float projectileSpeed;
 	public float fireRate;
+	public float health = 250;
 
 	public GameObject playerLaser;
 
@@ -61,8 +62,27 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Fire (){
+
 		GameObject laser = Instantiate (playerLaser, transform.position, Quaternion.identity) as GameObject;
 		laser.GetComponent<Rigidbody2D>().velocity = new Vector3(0, projectileSpeed, 0);
-		laser.transform.parent = transform;
+
+	}
+
+	// Damage the player	
+	void OnTriggerEnter2D(Collider2D collision){
+
+		Projectile missile = collision.gameObject.GetComponent<Projectile> ();
+
+		print ("player hit!");
+
+		if (missile) {
+			health -= missile.GetDamage ();
+			missile.Hit();
+			
+			if (health <= 0){
+				Destroy (gameObject);
+			}
+		}
+
 	}
 }
