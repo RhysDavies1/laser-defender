@@ -3,12 +3,17 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
+	public LevelManager levelManager;
+
 	public float shipSpeed;
 	public float projectileSpeed;
 	public float fireRate;
 	public float health = 250;
 
 	public GameObject playerLaser;
+
+	public AudioClip laserFire;
+	private float audioClipVolume = 0.5f;
 
 	public float padding = 1f;
 
@@ -66,6 +71,8 @@ public class PlayerController : MonoBehaviour {
 		GameObject laser = Instantiate (playerLaser, transform.position, Quaternion.identity) as GameObject;
 		laser.GetComponent<Rigidbody2D>().velocity = new Vector3(0, projectileSpeed, 0);
 
+		AudioSource.PlayClipAtPoint (laserFire, transform.position, audioClipVolume);
+
 	}
 
 	// Damage the player	
@@ -73,16 +80,18 @@ public class PlayerController : MonoBehaviour {
 
 		Projectile missile = collision.gameObject.GetComponent<Projectile> ();
 
-		print ("player hit!");
-
 		if (missile) {
 			health -= missile.GetDamage ();
 			missile.Hit();
 			
 			if (health <= 0){
-				Destroy (gameObject);
+				Die();
 			}
 		}
 
+	}
+
+	void Die(){
+		levelManager.LoadLevel ("Game Over");
 	}
 }
